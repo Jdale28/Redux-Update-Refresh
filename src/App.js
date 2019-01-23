@@ -2,7 +2,21 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { updateUser } from './actions/userActions'
+
 class App extends Component {
+  constructor(props) {
+    super(props)
+
+    this.onUpdateUser = this.onUpdateUser.bind(this)
+  }
+
+  onUpdateUser(event) {
+    this.props.onUpdateUser(event.target.value)
+  }
+
   render() {
     return (
       <div className="App">
@@ -20,9 +34,32 @@ class App extends Component {
             Learn React
           </a>
         </header>
+        <input onChange={this.onUpdateUser} />
+        {this.props.user}
       </div>
     );
   }
 }
 
-export default App;
+const mapStateToProps = (state, props) => {
+
+  return {
+    products: state.products,
+    user: state.user,
+    userPlusProp: `${state.user} ${props.aRandomProps}`
+  }
+}
+
+const mapActionsToProps = (dispatch, props) => {
+  
+  return bindActionCreators({
+    onUpdateUser: updateUser
+  }, dispatch)
+}
+
+const mergeProps = (propsFromState, propsFromDispatch, ownProps) => {
+  console.log(propsFromState, propsFromDispatch, ownProps)
+  return {}
+}
+
+export default connect(mapStateToProps, mapActionsToProps, mergeProps) (App);
